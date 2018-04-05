@@ -10,11 +10,11 @@ python3 daisy.py -u <usernames.txt> -p <passwords.txt> -r <url>
 ## breakdown:
 
 ### options:
-`-r`: Path of usernames list file (example: usernames.txt)
+`-u`: Path of usernames list file (example: usernames.txt)
 
 `-p`: Path of passwords list file (example: passwords.txt)
 
-`-u`: URL to attack (example: http://192.168.1.1)
+`-r`: URL to attack (example: http://192.168.1.1)
 
 ### example of a username list file:
 > !!! save as .txt file !!!
