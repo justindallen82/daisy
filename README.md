@@ -5,12 +5,12 @@ basic auth bruteforce tool
 ```
 git clone https://github.com/ryland192000/daisy
 cd daisy
-python3 daisy.py -u <usernames.txt> -p <passwords.txt> -u <url>
+python3 daisy.py -u <usernames.txt> -p <passwords.txt> -r <url>
 ```
 ## breakdown:
 
 ### options:
-`-u`: Path of usernames list file (example: usernames.txt)
+`-r`: Path of usernames list file (example: usernames.txt)
 
 `-p`: Path of passwords list file (example: passwords.txt)
 
