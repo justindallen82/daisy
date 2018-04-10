@@ -1,12 +1,29 @@
 # daisy
 basic auth bruteforce tool
 
+## requirements:
+```python3, scapy 2.4```
+
+### installing scapy:
+```
+git clone https://github.com/secdev/scapy
+cd scapy
+sudo python setup.py install
+```
+
 ## installation & usage:
+### basic auth brute attack:
 ```
 git clone https://github.com/ryland192000/daisy
 cd daisy
 python3 daisy.py -u <usernames.txt> -p <passwords.txt> -r <url>
 ```
+  
+### basic auth sniffer:
+```
+python3 daisy.py --sniff
+```
+
 ## breakdown:
 
 ### options:
