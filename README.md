@@ -10,6 +10,10 @@ git clone https://github.com/secdev/scapy
 cd scapy
 sudo python setup.py install
 ```
+### installing scapy-http:
+```
+pip3 install scapy-http
+```
 
 ## installation & usage:
 ### basic auth brute attack:
